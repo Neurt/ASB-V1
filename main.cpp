@@ -12,12 +12,12 @@
 // Motor A pins
 #define AIN1_PIN     6
 #define AIN2_PIN     5
-#define PWMA_PIN     4   // Must be a PWM-capable pin
+#define PWMA_PIN     4   
 
 // Motor B pins
 #define BIN1_PIN     15 
 #define BIN2_PIN     16
-#define PWMB_PIN     17  // Must be a PWM-capable pin
+#define PWMB_PIN     17  
 
 // TCRT5000 line sensors
 #define LINE_SENSOR_FL 1  // Front-left corner
@@ -62,18 +62,16 @@ void setupSensors() {
   delay(10);
 
   // 2) Initialize Left sensor
-  pinMode(XSHUT_LEFT, INPUT); // Let the left sensor boot
+  pinMode(XSHUT_LEFT, INPUT); 
   delay(10);
   if (!loxLeft.begin(0x29)) { 
-    // Default address is 0x29
     Serial.println("Failed to find VL53L0X (Left) at default address!");
     while (1);
   }
-  // Change the address to LEFT_ADDRESS
   loxLeft.setAddress(LEFT_ADDRESS);
 
   // 3) Initialize Center sensor
-  digitalWrite(XSHUT_CENTER, HIGH); // Boot only the center sensor
+  digitalWrite(XSHUT_CENTER, HIGH); 
   delay(10);
   if (!loxCenter.begin(0x29)) {
     Serial.println("Failed to find VL53L0X (Center) at default address!");
@@ -82,7 +80,7 @@ void setupSensors() {
   loxCenter.setAddress(CENTER_ADDRESS);
 
   // 4) Initialize Right sensor
-  digitalWrite(XSHUT_RIGHT, HIGH); // Boot only the right sensor
+  digitalWrite(XSHUT_RIGHT, HIGH); 
   delay(10);
   if (!loxRight.begin(0x29)) {
     Serial.println("Failed to find VL53L0X (Right) at default address!");
@@ -185,7 +183,7 @@ void detection (bool opponentLeft, bool opponentCenter, bool opponentRight, bool
 }
 
 void checkLineSensors() {
-  bool lineFL = digitalRead(LINE_SENSOR_FL);  // HIGH or LOW
+  bool lineFL = digitalRead(LINE_SENSOR_FL); 
   bool lineFR = digitalRead(LINE_SENSOR_FR);
 
   if (lineFL && lineFR) {
@@ -268,8 +266,8 @@ void loop() {
   bool opponentLeft   = (distLeft   < detectionThreshold);
   bool opponentCenter = (distCenter < detectionThreshold);
   bool opponentRight  = (distRight  < detectionThreshold);
-  bool opponentSideLeft = !digitalRead(OPP_SENSOR_BL); // Assuming LOW means opponent detected
-  bool opponentSideRight = !digitalRead(OPP_SENSOR_BR); // Assuming LOW means opponent detected
+  bool opponentSideLeft = !digitalRead(OPP_SENSOR_BL); 
+  bool opponentSideRight = !digitalRead(OPP_SENSOR_BR); 
 
   // If both front line sensors detect white (no line), execute the specified movement
   if (!lineFL && !lineFR) {
@@ -293,12 +291,11 @@ void loop() {
     detection(opponentLeft, opponentCenter, opponentRight, opponentSideLeft, opponentSideRight);
     delay(50);
 
-    return; // Exit the loop function to ignore other code
+    return;
   }
 
   // Check line sensors again before continuing
   // checkLineSensors();
 
-  // Short delay to avoid saturating I2C bus or reading too fast
   delay(50);
 }
