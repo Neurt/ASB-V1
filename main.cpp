@@ -165,14 +165,14 @@ void detection (bool opponentLeft, bool opponentCenter, bool opponentRight, bool
       opponentCenter = true;
     } else if (opponentSideRight && !opponentSideLeft) {
       driveMotorA(250);
-      driveMotorB(50);
+      driveMotorB(250);
       delay(30);
       driveMotorA(250);
       driveMotorB(-250);
       delay(25);
       stopMotors();
     } else if (opponentSideLeft && !opponentSideRight) {
-      driveMotorA(-50);
+      driveMotorA(-250);
       driveMotorB(-250);
       delay(30);
       driveMotorA(250);
@@ -195,14 +195,14 @@ void checkLineSensors() {
     driveMotorA(-250);
     driveMotorB(250);
     delay(100);
-    driveMotorA(200);
-    driveMotorB(100);
+    driveMotorA(100);
+    driveMotorB(50);
   } else if (!lineFL && lineFR) {
     driveMotorA(-250);
     driveMotorB(250);
     delay(100);
-    driveMotorA(-200);
-    driveMotorB(-100);
+    driveMotorA(-100);
+    driveMotorB(-50);
   }
 }
 
@@ -211,16 +211,13 @@ void setup() {
   Serial.begin(115250);
   Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
 
-  // Line sensors
   pinMode(LINE_SENSOR_FL, INPUT_PULLUP);
   pinMode(LINE_SENSOR_FR, INPUT_PULLUP);
   pinMode(OPP_SENSOR_BL, INPUT_PULLUP);
   pinMode(OPP_SENSOR_BR, INPUT_PULLUP);
 
-  // Initialize sensors
   setupSensors();
 
-  // Initialize motor driver
   setupMotorDriver();
 
   Serial.println("Setup complete.");
@@ -232,7 +229,7 @@ uint16_t readDistance(Adafruit_VL53L0X &sensor, uint8_t address) {
   Wire.endTransmission();
   sensor.rangingTest(&measure, false);
   if (measure.RangeStatus == 4) {
-    return 8190; // out of range
+    return 8190; 
   } else {
     return measure.RangeMilliMeter;
   }
@@ -242,26 +239,24 @@ uint16_t getAverageDistance(Adafruit_VL53L0X &sensor, uint8_t address, int sampl
   uint32_t total = 0;
   for (int i = 0; i < samples; i++) {
     total += readDistance(sensor, address);
-    delay(10); // Small delay between readings
+    delay(10); 
   }
   return total / samples;
 }
 
 void loop() {
   // Read line sensors
-  bool lineFL = digitalRead(LINE_SENSOR_FL);  // HIGH or LOW
+  bool lineFL = digitalRead(LINE_SENSOR_FL);  
   bool lineFR = digitalRead(LINE_SENSOR_FR);
 
-  // Check line sensors at the beginning of the loop
   checkLineSensors();
 
-  // Read VL53L0X sensors with averaging
   distLeft = getAverageDistance(loxLeft, LEFT_ADDRESS);
   distCenter = getAverageDistance(loxCenter, CENTER_ADDRESS);
   distRight = getAverageDistance(loxRight, RIGHT_ADDRESS);
 
   // Determine where the opponent is (if anywhere close)
-  const uint16_t detectionThreshold = 120; // millimeters
+  const uint16_t detectionThreshold = 120; // in mm
 
   bool opponentLeft   = (distLeft   < detectionThreshold);
   bool opponentCenter = (distCenter < detectionThreshold);
@@ -294,7 +289,6 @@ void loop() {
     return;
   }
 
-  // Check line sensors again before continuing
   // checkLineSensors();
 
   delay(50);
