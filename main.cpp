@@ -22,8 +22,8 @@
 // TCRT5000 line sensors
 #define LINE_SENSOR_FL 1  // Front-left corner
 #define LINE_SENSOR_FR 41  // Front-right corner
-#define OPP_SENSOR_BL 38 // Back-left corner
-#define OPP_SENSOR_BR 45  // Back-right corner
+#define OPP_SENSOR_BL 38 // Left side
+#define OPP_SENSOR_BR 45  // Right side
 
 // I2C pins
 #define I2C_SCL_PIN 9
